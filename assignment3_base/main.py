@@ -35,6 +35,9 @@ def _get_start_game_state_4_8():
 
     return state
 
+st = _get_empty_state(4)
+st[1][1] = st[1][2] = "W"
+st[2][0] = st[2][1] = st[2][2] = "B"
 
 def _get_default_start_game_state_5():
     state = _get_empty_state(5)
@@ -51,15 +54,19 @@ if __name__ == "__main__":
 
     # Retrieve a initial game state for the special 4 x 4 game.
     # Note that this is NOT the default 4 x 4 game
-    game_state = _get_start_game_state_4_8()
+    game_state = _get_default_start_game_state_5()
 
     # Get a fully solved state for a given n
     print("Printing the initial game state for a 4 x 4 game:")
     _print_game_state(game_state)
     print()
 
+
+    # st = [['W', 'W', 'W', 'W'], ['B', 'W', 'W', 'W'], ['B', 'B', 'W', 'W'], ['B', 'B', ' ', 'W']]
+    # print(f"test: {mp.is_terminal_state(st)}")
+
     # Get game value
-    print("The sate of the game is: " + str(mp.count_pieces(game_state)))
+    print("The state of the game is: " + str(mp.count_pieces(game_state)))
     print()
 
     # Test move values
@@ -81,7 +88,7 @@ if __name__ == "__main__":
     # Compute best game play with minimax
     start_time = time.time()
     print("Running full minimax: ")
-    print(mp.full_minimax(game_state, p1))
+    print(mp.full_minimax(_get_default_start_game_state_4(), p1))
     elapsed_time = time.time() - start_time
     print("Elapsed time: " + str(elapsed_time))
     print()
@@ -89,6 +96,6 @@ if __name__ == "__main__":
     # Compute best game play with alpha-beta pruning
     start_time = time.time()
     print("Running full minimax w/ alpha-beta pruning: ")
-    print(mp.full_minimax_ab(game_state, p1))
+    print(mp.full_minimax_ab(_get_default_start_game_state_4(), p1))
     elapsed_time = time.time() - start_time
     print(("Elapsed time: " + str(elapsed_time)))
