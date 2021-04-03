@@ -11,6 +11,8 @@ here that row and column both start with index 0.
 """
 from copy import deepcopy
 from pprint import pprint
+
+# code starts here
 def is_bounded(state, x, y):
 	if x < len(state) > y and x >= 0 and y >= 0:
 		return True
