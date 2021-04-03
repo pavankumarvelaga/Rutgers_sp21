@@ -4,6 +4,7 @@ import sys
 import os
 import random
 
+
 DATA_WIDTH = 28
 DATA_HEIGHT = 28
 NUMBER_OF_TRAINING_EXAMPLES = 5000

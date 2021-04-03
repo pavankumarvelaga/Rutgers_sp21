@@ -1,5 +1,9 @@
 import inspect
 import sys
+import numpy as np
+import math
+p_of_y = []
+conditional_prob_table = []
 
 """
 Raise a "not defined" exception as a reminder 
@@ -21,8 +25,12 @@ def extract_basic_features(digit_data, width, height):
     features = []
     # Your code starts here
     # You should remove _raise_not_defined() after you complete your code
+    for i in range(height):
+        for j in range(width):
+            features.append(digit_data[i][j])
     # Your code ends here
-    _raise_not_defined()
+    # _raise_not_defined()
+    # [1]
     return features
 
 
@@ -70,8 +78,28 @@ should be used for training.
 def compute_statistics(data, label, width, height, feature_extractor, percentage=100.0):
     # Your code starts here
     # You should remove _raise_not_defined() after you complete your code
+    num_records = math.ceil(percentage/100.0 * len(data)) 
+    data = data[:num_records]
+    label = label[:num_records]
+    features = []
+    global p_of_y
+    p_of_y = []
+    k = 1e-10
+    global conditional_prob_table
+    conditional_prob_table = []
+    for i in data:
+        features.append(feature_extractor(i, width, height ))
+    features = np.array(features)
+    for i in range(10):
+        p_of_y.append(len([m for m in label if m == i])/len(label))
+        p_list_temp = []
+        for j in range(width*height):
+            p_list_temp.append((sum(features[:,j] == 1)+k)/(num_records+k))
+        conditional_prob_table.append(p_list_temp)
+    # print(conditional_prob_table)
+    
     # Your code ends here
-    _raise_not_defined()
+    # _raise_not_defined()
 
 
 """
@@ -81,12 +109,21 @@ For the given features for a single digit image, compute the class
 
 def compute_class(features):
     predicted = -1
-
     # Your code starts here
-    # You should remove _raise_not_defined() after you complete your code
-    # Your code ends here
-    _raise_not_defined()
+    log_y_given_p = []
+    # print(p_of_y)
+    for i in range(10):
+        tmp = 0.0
+        for j in range(len(features)):
+          if features[j] == 1:
+            tmp += math.log(conditional_prob_table[i][j])
+        log_y_given_p.append(math.log(p_of_y[i])+tmp)   
+    predicted = np.argmax(log_y_given_p)
+    print(log_y_given_p,predicted)
 
+    # You should remove _raise_not_ßdefined() after you complete your code
+    # # Your code ends here
+    # _raise_not_defined()
     return predicted
 
 
@@ -99,10 +136,16 @@ of data
 def classify(data, width, height, feature_extractor):
 
     predicted = []
+    for i in data:
+        features = feature_extractor(i,width,height)
+        predicted.append(compute_class(features))
+
+
 
     # Your code starts here
     # You should remove _raise_not_defined() after you complete your code
     # Your code ends here
-    _raise_not_defined()
+    # _raise_not_defined()
+    print(predicted)
 
     return predicted
