@@ -3,7 +3,9 @@ import sys
 import numpy as np
 import math
 p_of_y = []
-conditional_prob_table = []
+from collections import defaultdict
+conditional_prob_table = defaultdict(list)
+
 
 """
 Raise a "not defined" exception as a reminder 
@@ -27,6 +29,7 @@ def extract_basic_features(digit_data, width, height):
     # You should remove _raise_not_defined() after you complete your code
     for i in range(height):
         for j in range(width):
+            # features.append(1 if digit_data[i][j] > 0 else 0)
             features.append(digit_data[i][j])
     # Your code ends here
     # _raise_not_defined()
@@ -84,19 +87,25 @@ def compute_statistics(data, label, width, height, feature_extractor, percentage
     features = []
     global p_of_y
     p_of_y = []
-    k = 1e-10
+    k = 1e-20
     global conditional_prob_table
-    conditional_prob_table = []
+    conditional_prob_table = defaultdict(list)
     for i in data:
         features.append(feature_extractor(i, width, height ))
     features = np.array(features)
+    # print(features[0])
+    
     for i in range(10):
         p_of_y.append(len([m for m in label if m == i])/len(label))
         p_list_temp = []
-        for j in range(width*height):
-            p_list_temp.append((sum(features[:,j] == 1)+k)/(num_records+k))
-        conditional_prob_table.append(p_list_temp)
-    # print(conditional_prob_table)
+        p_dict_temp = defaultdict(list)
+        idxs = [idx for idx, e in enumerate(label) if e == i]
+        for f in np.unique(features[0]):
+            for j in range(len(features[0])):
+                p_list_temp.append((sum(features[idxs][:,j] == f)+k)/(len(idxs)+k))
+            p_dict_temp[f] =  p_list_temp
+            p_list_temp = []
+        conditional_prob_table[i] = p_dict_temp
     
     # Your code ends here
     # _raise_not_defined()
@@ -115,11 +124,10 @@ def compute_class(features):
     for i in range(10):
         tmp = 0.0
         for j in range(len(features)):
-          if features[j] == 1:
-            tmp += math.log(conditional_prob_table[i][j])
+            tmp += math.log(conditional_prob_table[i][features[j]][j])
         log_y_given_p.append(math.log(p_of_y[i])+tmp)   
     predicted = np.argmax(log_y_given_p)
-    print(log_y_given_p,predicted)
+    # print(log_y_given_p,predicted)
 
     # You should remove _raise_not_ßdefined() after you complete your code
     # # Your code ends here
@@ -146,6 +154,6 @@ def classify(data, width, height, feature_extractor):
     # You should remove _raise_not_defined() after you complete your code
     # Your code ends here
     # _raise_not_defined()
-    print(predicted)
+    # print(predicted)
 
     return predicted
